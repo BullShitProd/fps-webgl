@@ -1,63 +1,70 @@
 import * as BABYLON from 'babylonjs';
-import wood from '../../assets/images/wood.jpg';
-import brick from '../../assets/images/brick.jpg';
+import tile from '../../assets/images/tile.jpg';
 
 export default class Arena {
   constructor(game) {
     this.game = game;
     this.scene = game.scene;
 
-    // Création de notre lumière principale
-    // this.light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 20, 0), this.scene);
-    // this.light.diffuse = new BABYLON.Color3(1, 1, 1);
-    // this.light.specular = new BABYLON.Color3(1, 1, 1);
+    this._initLight();
+    this._initMaterial();
+    this._initBox();
+    this._initColumn();
+  }
 
-    this.light1 = new BABYLON.PointLight('Spot1', new BABYLON.Vector3(0, 30, -10), this.scene);
-    this.light1.diffuse = new BABYLON.Color3(0.5, 1, 1);
-    this.light1.specular = new BABYLON.Color3(1, 1, 1);
-    this.light1.range = 40;
+  // Création de notre lumière principale
+  _initLight() {
+    this.light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 10, 0), this.scene);
+    this.light2 = new BABYLON.HemisphericLight('light2', new BABYLON.Vector3(0, -1, 0), this.scene);
+    this.light2.intensity = 0.8;
+  }
 
-    console.log('couou');
-
+  _initMaterial() {
     // Material pour le sol
     this.materialGround = new BABYLON.StandardMaterial('groundTexture', this.scene);
-    this.materialGround.diffuseTexture = new BABYLON.Texture(brick, this.scene);
-    this.materialGround.diffuseTexture.scale(4.0);
+    this.materialGround.diffuseTexture = new BABYLON.Texture(tile, this.scene);
+    this.materialGround.diffuseTexture.uScale = 8.0;
+    this.materialGround.diffuseTexture.vScale = 8.0;
 
-    // Material pour les objects
+    // material pour les objets
     this.materialWall = new BABYLON.StandardMaterial('wallTexture', this.scene);
-    this.materialWall.diffuseTexture = new BABYLON.Texture(wood, this.scene);
+    this.materialWall.diffuseTexture = new BABYLON.Texture(tile, this.scene);
+  }
 
-    // Ajoutons un sol de 20 par 20
-    this.ground = BABYLON.MeshBuilder.CreateGround('ground1', { height: 20, width: 20, subdivision: 2 }, this.scene);
-    this.ground.scaling = new BABYLON.Vector3(2, 10, 3);
-    this.ground.scaling.z = 2;
-    this.ground.material = this.materialGround;
+  _initBox() {
+    this.boxArena = BABYLON.MeshBuilder.CreateBox('box1', { size: 100, updatable: 100, sideOrientation: BABYLON.Mesh.BACKSIDE }, this.scene);
+    this.boxArena.material = this.materialGround;
+    this.boxArena.position.y = 50 * 0.3;
+    this.boxArena.scaling.y = 0.3;
+    this.boxArena.scaling.z = 0.8;
+    this.boxArena.scaling.x = 3.5;
+  }
 
-    // SUR TOUS LES AXES Y -> On monte les meshes de la moitié de la hauteur du mesh en question.
+  _initColumn() {
+    this.columns = [];
+    this.numberColumn = 6;
+    this.sizeArena = 100 * this.boxArena.scaling.x - 50;
+    this.ratio = ((100 / this.numberColumn) / 100) * this.sizeArena;
 
-    this.mainBox = BABYLON.MeshBuilder.CreateBox('box1', { size: 3 }, this.scene);
-    this.mainBox.scaling.y = 1;
-    this.mainBox.position = new BABYLON.Vector3(5, ((3 / 2) * this.mainBox.scaling.y), 5);
-    this.mainBox.rotation.y = (Math.PI * 45) / 180;
-    this.mainBox.material = this.materialWall;
+    for (let i = 0; i <= 1; i += 1) {
+      if (this.numberColumn > 0) {
+        this.columns[i] = [];
+        const mainCylinder = BABYLON.MeshBuilder.CreateCylinder(`cyl0-${i}`, {
+          diameterTop: 5, diameterBottom: 5, height: 30, tessellation: 20, subdivisions: 4,
+        }, this.scene);
 
-    this.mainBox2 = this.mainBox.clone('box2');
-    this.mainBox2.scaling.y = 2;
-    this.mainBox2.position = new BABYLON.Vector3(5, ((3 / 2) * this.mainBox2.scaling.y), -5);
+        mainCylinder.position = new BABYLON.Vector3(-this.sizeArena / 2, 30 / 2, -20 + (40 * i));
+        mainCylinder.material = this.materialWall;
+        this.columns[i].push(mainCylinder);
+      }
 
-    this.mainBox3 = this.mainBox.clone('box3');
-    this.mainBox3.scaling.y = 3;
-    this.mainBox3.position = new BABYLON.Vector3(-5, ((3 / 2) * this.mainBox3.scaling.y), -5);
-
-    this.mainBox4 = this.mainBox.clone('box4');
-    this.mainBox4.scaling.y = 2;
-    this.mainBox4.position = new BABYLON.Vector3(-5, ((3 / 2) * this.mainBox4.scaling.y), 5);
-
-    this.cylinder = BABYLON.MeshBuilder.CreateCylinder('cyl1', {
-      height: 20, diameterTop: 5, diameterBottom: 5, tessellation: 20, subdivisions: 4,
-    }, this.scene);
-    this.cylinder.position.y = 20 / 2;
-    this.cylinder.material = this.materialWall;
+      if (this.numberColumn > 1) {
+        for (let y = 1; y <= this.numberColumn - 1; y += 1) {
+          const newCylinder = this.columns[i][0].clone(`cy1-${y}-${i}`);
+          newCylinder.position = new BABYLON.Vector3(-(this.sizeArena / 2) + (this.ratio * y), 30 / 2, this.columns[i][0].position.z);
+          this.columns[i].push(newCylinder);
+        }
+      }
+    }
   }
 }

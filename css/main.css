@@ -6,6 +6,17 @@ html, body {
   padding: 0;
 }
 
+#fps {
+  position: absolute;
+  background-color: black;
+  color:  red;
+  text-align: center;
+  font-size: 100px;
+  color: white;
+  top: 15px;
+  right: 10px;
+}
+
 #renderCanvas {
   width: 100%;
   height: 100%;
