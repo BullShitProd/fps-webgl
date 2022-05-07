@@ -8,7 +8,16 @@ export default class Arena {
     this.scene = game.scene;
 
     // Création de notre lumière principale
-    this.light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 1, 0), this.scene);
+    // this.light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 20, 0), this.scene);
+    // this.light.diffuse = new BABYLON.Color3(1, 1, 1);
+    // this.light.specular = new BABYLON.Color3(1, 1, 1);
+
+    this.light1 = new BABYLON.PointLight('Spot1', new BABYLON.Vector3(0, 30, -10), this.scene);
+    this.light1.diffuse = new BABYLON.Color3(0.5, 1, 1);
+    this.light1.specular = new BABYLON.Color3(1, 1, 1);
+    this.light1.range = 40;
+
+    console.log('couou');
 
     // Material pour le sol
     this.materialGround = new BABYLON.StandardMaterial('groundTexture', this.scene);
