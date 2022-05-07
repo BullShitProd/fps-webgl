@@ -777,6 +777,11 @@ array.prototype.flat@^1.2.5:
     es-abstract "^1.19.2"
     es-shim-unscopables "^1.0.0"
 
+babylonjs@^5.5.5:
+  version "5.5.5"
+  resolved "https://registry.yarnpkg.com/babylonjs/-/babylonjs-5.5.5.tgz#eaded819d63c96ebf2749d569db0b668bb758ab8"
+  integrity sha512-zXeNFt3dadYDBQTQhQUtYuK6bF7d35zojJzYuynW6PwnEcw/m3+trneswBEVKycsY907hOXrD+TXjH8yCoBw/A==
+
 balanced-match@^1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.2.tgz#e83e3a7e3f300b34cb9d87f615fa0cbf357690ee"
