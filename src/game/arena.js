@@ -7,6 +7,7 @@ export default class Arena {
     this.scene = game.scene;
 
     this._initLight();
+    this._initShadow();
     this._initMaterial();
     this._initBox();
     this._initColumn();
@@ -15,8 +16,26 @@ export default class Arena {
   // Création de notre lumière principale
   _initLight() {
     this.light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 10, 0), this.scene);
+    this.light.intensity = 0.2;
+
     this.light2 = new BABYLON.HemisphericLight('light2', new BABYLON.Vector3(0, -1, 0), this.scene);
-    this.light2.intensity = 0.8;
+    this.light2.specular = new BABYLON.Color3(0, 0, 0);
+    this.light2.intensity = 0.2;
+
+    this.light3 = new BABYLON.PointLight('Spot0', new BABYLON.Vector3(-40, 10, -100), this.scene);
+    this.light3.intensity = 0.3;
+    this.light3.specular = new BABYLON.Color3(0, 0, 0);
+  }
+
+  _initShadow() {
+    this.shadowGenerator1 = new BABYLON.ShadowGenerator(2048, this.light3);
+    this.shadowGenerator1.usePoissonSampling = true;
+    this.shadowGenerator1.bias = 0.0005;
+
+    this.scene.materials.forEach((material) => {
+      // eslint-disable-next-line no-param-reassign
+      material.maxSimultaneousLights = 50;
+    });
   }
 
   _initMaterial() {
@@ -40,6 +59,8 @@ export default class Arena {
     this.boxArena.scaling.x = 3.5;
 
     this.boxArena.checkCollisions = true;
+
+    this.boxArena.receiveShadows = true;
   }
 
   _initColumn() {
@@ -59,6 +80,11 @@ export default class Arena {
         mainCylinder.material = this.materialWall;
         mainCylinder.checkCollisions = true;
 
+        // La formule pour générer des ombres
+        this.shadowGenerator1.getShadowMap().renderList.push(mainCylinder);
+        // La formule pour recevoir des ombres
+        mainCylinder.receiveShadows = true;
+
         this.columns[i].push(mainCylinder);
       }
 
@@ -67,6 +93,9 @@ export default class Arena {
           const newCylinder = this.columns[i][0].clone(`cy1-${y}-${i}`);
           newCylinder.position = new BABYLON.Vector3(-(this.sizeArena / 2) + (this.ratio * y), 30 / 2, this.columns[i][0].position.z);
           newCylinder.checkCollisions = true;
+
+          this.shadowGenerator1.getShadowMap().renderList.push(newCylinder);
+          newCylinder.receiveShadows = true;
           this.columns[i].push(newCylinder);
         }
       }

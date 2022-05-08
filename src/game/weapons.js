@@ -125,7 +125,7 @@ export default class Weapons {
       // Si la distance au premier objet touché est inférieure a 10, on détruit la roquette
       if (!meshFound || meshFound.distance < 10) {
         this.explosionRocket(meshFound);
-        // newRocket.dispose();
+        newRocket.dispose();
       }
     });
   }
@@ -150,7 +150,7 @@ export default class Weapons {
       explosionRadius.registerAfterRender(() => {
         explosionRadius.material.alpha -= 0.02;
         if (explosionRadius.material.alpha <= 0) {
-          // explosionRadius.dispose();
+          explosionRadius.dispose();
         }
       });
     }
