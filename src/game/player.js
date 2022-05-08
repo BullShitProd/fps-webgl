@@ -1,19 +1,27 @@
 import * as BABYLON from 'babylonjs';
 import { degToRad } from './utils';
+import Weapons from './weapons';
 
 export default class Player {
   constructor(game, canvas) {
     this.game = game;
     this.scene = game.scene;
+    this.canvas = canvas;
 
+    // camera
     this.angularSensitivity = 400;
     this.rotEngaged = false;
     this.controlEnabled = false;
     this.speed = 1;
 
+    // params players
+    this.isAlive = true;
+    this.weponShoot = false;
+
     this._initPointerLock();
     this._initMovement();
     this._initCamera(canvas);
+    this._initWeapon();
   }
 
   _initMovement() {
@@ -114,6 +122,36 @@ export default class Player {
     this.isAlive = true;
     // On demande à la caméra de regarder au point zéro de la scène
     this.camera.setTarget(BABYLON.Vector3.Zero());
+  }
+
+  _initWeapon() {
+    this.camera.weapons = new Weapons(this);
+
+    this.canvas.addEventListener('mousedown', () => {
+      if (this.controlEnabled && !this.weponShoot) {
+        this.weponShoot = true;
+        this.handleUserMouseDown();
+      }
+    }, false);
+
+    this.canvas.addEventListener('mouseup', () => {
+      if (this.controlEnabled && this.weponShoot) {
+        this.weponShoot = false;
+        this.handleUserMouseUp();
+      }
+    }, false);
+  }
+
+  handleUserMouseDown() {
+    if (this.isAlive === true) {
+      this.camera.weapons.fire();
+    }
+  }
+
+  handleUserMouseUp() {
+    if (this.isAlive === true) {
+      this.camera.weapons.stopFire();
+    }
   }
 
   checkMove(ratioFps) {

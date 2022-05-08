@@ -16,14 +16,7 @@ export default class Game {
     this._arena = new Arena(this);
 
     this.engine.runRenderLoop(() => {
-      this.fps = this.engine.getFps();
-
-      const divFps = document.getElementById('fps');
-      divFps.innerHTML = `${this.fps.toFixed()} fps`;
-
-      this._player.checkMove(this.fps / 60);
-
-      this.scene.render();
+      this.renderLoop();
     });
 
     window.addEventListener('resize', () => {
@@ -31,6 +24,22 @@ export default class Game {
         this.engine.resize();
       }
     }, false);
+  }
+
+  renderLoop() {
+    this.fps = this.engine.getFps();
+
+    const divFps = document.getElementById('fps');
+    divFps.innerHTML = `${this.fps.toFixed()} fps`;
+
+    this._player.checkMove(this.fps / 60);
+
+    this.scene.render();
+
+    // Si launchBullets est a true, on tire
+    if (this._player.camera.weapons.lauchBullets === true) {
+      this._player.camera.weapons.lauchFire();
+    }
   }
 
   _initScene() {
