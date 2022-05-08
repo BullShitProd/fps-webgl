@@ -73,12 +73,12 @@ export default class Weapons {
 
   lauchFire() {
     if (this.canFire) {
-      const renderWidth = this.engine.getRenderWidth(true);
-      const renderHeight = this.engine.getRenderHeight(true);
+      // const renderWidth = this.engine.getRenderWidth(true);
+      // const renderHeight = this.engine.getRenderHeight(true);
 
-      let direction = this.player.scene.pick(renderWidth / 2, renderHeight / 2);
-      direction = direction.pickedPoint.subtractInPlace(this.player.camera.position);
-      direction = direction.normalize();
+      // let direction = this.player.scene.pick(renderWidth / 2, renderHeight / 2);
+      // direction = direction.pickedPoint.subtractInPlace(this.player.camera.position);
+      // direction = direction.normalize();
 
       this.createRocket();
       this.canFire = false;
@@ -86,7 +86,7 @@ export default class Weapons {
   }
 
   createRocket() {
-    const playerPostion = this.player.camera;
+    const playerPostion = this.player.camera.playerBox;
 
     const positionValue = this.rocketLauncher.absolutePosition.clone();
     const rotationValue = playerPostion.rotation;
@@ -125,7 +125,7 @@ export default class Weapons {
       // Si la distance au premier objet touché est inférieure a 10, on détruit la roquette
       if (!meshFound || meshFound.distance < 10) {
         this.explosionRocket(meshFound);
-        newRocket.dispose();
+        // newRocket.dispose();
       }
     });
   }
@@ -150,7 +150,7 @@ export default class Weapons {
       explosionRadius.registerAfterRender(() => {
         explosionRadius.material.alpha -= 0.02;
         if (explosionRadius.material.alpha <= 0) {
-          explosionRadius.dispose();
+          // explosionRadius.dispose();
         }
       });
     }

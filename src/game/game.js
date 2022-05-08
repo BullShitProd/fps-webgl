@@ -45,6 +45,8 @@ export default class Game {
   _initScene() {
     const scene = new BABYLON.Scene(this.engine);
     scene.clearColor = new BABYLON.Color3(0.9, 0.9, 0.9);
+    // scene.gravity = new BABYLON.Vector3(0, -9.81, 0);
+    scene.collisionsEnabled = true;
     return scene;
   }
 }

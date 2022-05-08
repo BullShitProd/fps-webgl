@@ -32,12 +32,14 @@ export default class Arena {
   }
 
   _initBox() {
-    this.boxArena = BABYLON.MeshBuilder.CreateBox('box1', { size: 100, updatable: 100, sideOrientation: BABYLON.Mesh.BACKSIDE }, this.scene);
+    this.boxArena = BABYLON.MeshBuilder.CreateBox('box1', { size: 100, updatable: false, sideOrientation: BABYLON.Mesh.BACKSIDE }, this.scene);
     this.boxArena.material = this.materialGround;
     this.boxArena.position.y = 50 * 0.3;
     this.boxArena.scaling.y = 0.3;
     this.boxArena.scaling.z = 0.8;
     this.boxArena.scaling.x = 3.5;
+
+    this.boxArena.checkCollisions = true;
   }
 
   _initColumn() {
@@ -55,6 +57,8 @@ export default class Arena {
 
         mainCylinder.position = new BABYLON.Vector3(-this.sizeArena / 2, 30 / 2, -20 + (40 * i));
         mainCylinder.material = this.materialWall;
+        mainCylinder.checkCollisions = true;
+
         this.columns[i].push(mainCylinder);
       }
 
@@ -62,6 +66,7 @@ export default class Arena {
         for (let y = 1; y <= this.numberColumn - 1; y += 1) {
           const newCylinder = this.columns[i][0].clone(`cy1-${y}-${i}`);
           newCylinder.position = new BABYLON.Vector3(-(this.sizeArena / 2) + (this.ratio * y), 30 / 2, this.columns[i][0].position.z);
+          newCylinder.checkCollisions = true;
           this.columns[i].push(newCylinder);
         }
       }
