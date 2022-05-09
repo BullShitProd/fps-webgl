@@ -17,7 +17,7 @@ export default class Weapons {
     this.rocketLauncher = this.createNewWeapon();
 
     // Cadence de tir
-    this.fireRate = 800;
+    this.fireRate = 100;
 
     // Delta de calcul pour savoir quand le tir est à nouveau disponible
     this._deltaFireRate = this.fireRate;
@@ -112,47 +112,6 @@ export default class Weapons {
     newRocket.material = new BABYLON.StandardMaterial('rocketMaterial', this.player.scene);
     newRocket.material.diffuseColor = new BABYLON.Color3(1, 0, 0);
 
-    newRocket.registerAfterRender(() => {
-      // On bouge la roquette vers l'avant
-      newRocket.translate(new BABYLON.Vector3(0, 0, 1.5), 1.5, 0);
-
-      // On crée un rayon qui part de la base de la roquette vers l'avant
-      const rayRocket = new BABYLON.Ray(newRocket.position, newRocket.direction);
-
-      // On regarde quel est le premier objet qu'on touche
-      const meshFound = newRocket.getScene().pickWithRay(rayRocket);
-
-      // Si la distance au premier objet touché est inférieure a 10, on détruit la roquette
-      if (!meshFound || meshFound.distance < 10) {
-        this.explosionRocket(meshFound);
-        newRocket.dispose();
-      }
-    });
-  }
-
-  explosionRocket(meshFound) {
-    // On vérifie qu'on a bien touché quelque chose
-    if (meshFound.pickedMesh) {
-      // On crée une sphere qui représentera la zone d'impact
-      const explosionRadius = BABYLON.MeshBuilder.CreateSphere('explosionRadius', { segments: 5.0, diameter: 20 }, this.player.scene);
-      // On positionne la sphère là où il y a eu impact
-      explosionRadius.position = meshFound.pickedPoint;
-      // On fait en sorte que les explosions ne soient pas considérées pour le Ray de la roquette
-      explosionRadius.isPickable = false;
-
-      // On crée un petit material orange
-      explosionRadius.material = new BABYLON.StandardMaterial('textureExplosion', this.player.game.scene);
-      explosionRadius.material.diffuseColor = new BABYLON.Color3(1, 0.6, 0);
-      explosionRadius.material.specularColor = new BABYLON.Color3(0, 0, 0);
-      explosionRadius.material.alpha = 0.8;
-
-      // Chaque frame, on baisse l'opacité et on efface l'objet quand l'alpha est arrivé à 0
-      explosionRadius.registerAfterRender(() => {
-        explosionRadius.material.alpha -= 0.02;
-        if (explosionRadius.material.alpha <= 0) {
-          explosionRadius.dispose();
-        }
-      });
-    }
+    this.player.game.rockets.push(newRocket);
   }
 }

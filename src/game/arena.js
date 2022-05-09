@@ -7,7 +7,7 @@ export default class Arena {
     this.scene = game.scene;
 
     this._initLight();
-    this._initShadow();
+    // this._initShadow();
     this._initMaterial();
     this._initBox();
     this._initColumn();
@@ -81,7 +81,8 @@ export default class Arena {
         mainCylinder.checkCollisions = true;
 
         // La formule pour générer des ombres
-        this.shadowGenerator1.getShadowMap().renderList.push(mainCylinder);
+        // this.shadowGenerator1.getShadowMap().renderList.push(mainCylinder);
+
         // La formule pour recevoir des ombres
         mainCylinder.receiveShadows = true;
 
@@ -94,7 +95,7 @@ export default class Arena {
           newCylinder.position = new BABYLON.Vector3(-(this.sizeArena / 2) + (this.ratio * y), 30 / 2, this.columns[i][0].position.z);
           newCylinder.checkCollisions = true;
 
-          this.shadowGenerator1.getShadowMap().renderList.push(newCylinder);
+          // this.shadowGenerator1.getShadowMap().renderList.push(newCylinder);
           newCylinder.receiveShadows = true;
           this.columns[i].push(newCylinder);
         }
