@@ -11,6 +11,7 @@ export default class Arena {
     this._initMaterial();
     this._initBox();
     this._initColumn();
+    this._initMonkey();
   }
 
   // Création de notre lumière principale
@@ -61,6 +62,17 @@ export default class Arena {
     this.boxArena.checkCollisions = true;
 
     this.boxArena.receiveShadows = true;
+  }
+
+  _initMonkey() {
+    BABYLON.SceneLoader.ImportMesh('', './assets/scene/', 'skull.babylon', this.scenes, (newMeshes) => {
+      const skull = newMeshes[0];
+      skull.convertToFlatShadedMesh();
+      skull.sideOrientation = BABYLON.Mesh.BACKSIDE;
+      skull.scaling = new BABYLON.Vector3(0.2, 0.2, 0.2);
+      skull.position = new BABYLON.Vector3(50, 6, 0);
+      skull.checkCollisions = true;
+    });
   }
 
   _initColumn() {

@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "license": "MIT",
   "source": "index.html",
+  "staticFiles" : {
+    "staticPath" : "./assets",
+    "staticOutPath" : "assets" 
+  },
   "scripts": {
     "start": "parcel",
     "build": "parcel build index.html",
@@ -13,7 +17,8 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "parcel": "^2.5.0"
+    "parcel": "^2.5.0",
+    "parcel-reporter-static-files-copy": "^1.3.4"
   },
   "dependencies": {
     "babylonjs": "^5.5.5"
