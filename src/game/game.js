@@ -1,6 +1,7 @@
 import * as BABYLON from 'babylonjs';
 import Player from './player';
 import Arena from './arena';
+import Armory from './armory';
 
 export default class Game {
   constructor(canvasId) {
@@ -17,6 +18,9 @@ export default class Game {
       new BABYLON.Vector3(-40, 5, 0),
     ];
 
+    // Ajout de l'armurie
+    this.armory = new Armory();
+
     this.scene = this._initScene(this.engine);
 
     this._player = new Player(this, this.canvas);
@@ -28,6 +32,8 @@ export default class Game {
     this.rockets = [];
     // Les explosions qui découlent des roquettes
     this.explosionRadius = [];
+
+    this.lasers = [];
 
     this.engine.runRenderLoop(() => {
       this.renderLoop();
@@ -51,6 +57,12 @@ export default class Game {
     // On apelle nos deux fonctions de calcul pour les roquettes
     this.renderRockets();
     this.renderExplosionRadius();
+
+    // On calcule la diminution de la taille du laser
+    this.renderLaser();
+
+    // On calcule les animations des armes
+    this.renderWeapons();
 
     this.scene.render();
 
@@ -122,6 +134,32 @@ export default class Game {
       this.impactWithPlayer(explosionRadius);
 
       this.explosionRadius.push(explosionRadius);
+    }
+  }
+
+  renderLaser() {
+    this.lasers.forEach((laser, laserIndex) => {
+      this.lasers[laserIndex].edgesWidth -= 1;
+      if (this.lasers[laserIndex].edgesWidth <= 0) {
+        laser.dispose();
+        this.lasers.splice(laserIndex, 1);
+      }
+    });
+  }
+
+  renderWeapons() {
+    if (this.playerData && this.playerData.camera.weapons.inventory) {
+      // On regarde toutes les armes dans inventory
+      const inventoryWeapons = this.playerData.camera.weapons.inventory;
+
+      inventoryWeapons.forEach((weapon, weaponIndex) => {
+        if (weapon.isActive && weapon.position.y < this.playerData.camera.weapons.topPositionY) {
+          inventoryWeapons[weaponIndex].position.y += 0.1;
+        } else if (!weapon.isActive && weapon.position.y !== this.playerData.camera.weapons.bottomPosition.y) {
+          // Sinon, si l'arme est inactive et pas encore à la position basse
+          inventoryWeapons[weaponIndex].position.y -= 0.1;
+        }
+      });
     }
   }
 

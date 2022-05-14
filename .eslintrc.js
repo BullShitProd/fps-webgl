@@ -15,5 +15,6 @@ module.exports = {
       ignoreRegExpLiterals: true,
     }],
     'no-underscore-dangle': 'off',
+    'no-restricted-syntax': 'off',
   },
 };

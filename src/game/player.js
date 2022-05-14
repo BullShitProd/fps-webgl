@@ -27,6 +27,7 @@ export default class Player {
     this._initCamera();
     this._initWeapon();
     this._initHitBox();
+    this._initChangeWeapon();
   }
 
   _initMovement() {
@@ -128,8 +129,6 @@ export default class Player {
     /// / On dit que le spawnPoint est celui choisi selon le random plus haut
     this.spawnPoint = this.game.allSpawnPoints[randomPoint];
 
-    console.log(randomPoint);
-
     this.playerBox = BABYLON.MeshBuilder.CreateBox('headMainPlayer', { size: 3 }, this.scene);
     this.playerBox.position = this.spawnPoint.clone();
     this.playerBox.ellipsoid = new BABYLON.Vector3(2, 2, 2);
@@ -187,6 +186,24 @@ export default class Player {
         this.handleUserMouseUp();
       }
     }, false);
+  }
+
+  _initChangeWeapon() {
+    this.previousWheeling = 0;
+    this.canvas.onwheel = (event) => {
+      // Si la différence entre les deux tours de souris sont minimes
+      if (Math.round(event.timeStamp - this.previousWheeling) > 10) {
+        if (event.deltaY < 0) {
+          // Si on scroll vers le haut, on va chercher l'arme suivante
+          this.camera.weapons.nextWeapon(1);
+        } else {
+          // Si on scroll vers le bas, on va chercher l'arme précédente
+          this.camera.weapons.nextWeapon(-1);
+        }
+      }
+      // On affecte a previousWheeling la valeur actuelle
+      this.previousWheeling = event.timeStamp;
+    };
   }
 
   handleUserMouseDown() {
@@ -270,24 +287,27 @@ export default class Player {
     this.scene.activeCamera = this.deadCamera;
     this.deadCamera.attachControl(this.scene.getEngine().getRenderingCanvas());
 
-    // Suppression de la playerBox
-    this.camera.playerBox.dispose();
+    // // Suppression de la playerBox
+    // this.camera.playerBox.dispose();
 
-    // Suppression de la camera
-    this.camera.dispose();
+    // let inventoryWeapons = this.camera.weapons.inventory;
+    // inventoryWeapons.forEach((weapon) => {
+    //   weapon.dispose();
+    // });
+    // inventoryWeapons = [];
 
-    // Suppression de l'arme
-    this.camera.weapons.rocketLauncher.dispose();
+    // // Suppression de la camera
+    // this.camera.dispose();
 
-    // On signale à Weapons que le joueur est mort
-    this.isAlive = false;
+    // // On signale à Weapons que le joueur est mort
+    // this.isAlive = false;
 
-    // On fait revivre le joeur
-    setTimeout(() => {
-      this._initPlayerBox();
-      this._initCamera();
-      this._initWeapon();
-      this._initHitBox();
-    }, 4000);
+    // // On fait revivre le joeur
+    // setTimeout(() => {
+    //   this._initPlayerBox();
+    //   this._initCamera();
+    //   this._initWeapon();
+    //   this._initHitBox();
+    // }, 4000);
   }
 }
